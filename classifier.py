@@ -37,7 +37,7 @@ class Classifier(nn.Module):
         
         self.pool = nn.MaxPool2d(2, 2)
         
-        self.fc1 = nn.Linear(1 * 227 * 227, NUM_CLASSES)
+        self.fc1 = nn.Linear(1 * 112 * 112, NUM_CLASSES)
 
     def forward(self, x):
         # 64
@@ -64,8 +64,7 @@ class Classifier(nn.Module):
         x += residual
         x = self.conv10_bn(F.relu(self.conv10_bn(self.conv10(x))))
         
-        print(x.size())
-        x = x.view(x.size()[0], 1 * 227 * 227)
+        x = x.view(x.size()[0], 1 * 112 * 112)
         x = self.fc1(x)
         return x
 
