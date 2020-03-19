@@ -37,34 +37,36 @@ class Classifier(nn.Module):
         
         self.pool = nn.MaxPool2d(2, 2)
         
-        self.fc1 = nn.Linear(1 * 112 * 112, NUM_CLASSES)
+        self.fc1 = nn.Linear(1 * 200 * 200, NUM_CLASSES)
+        self.sigmoid = nn.Sigmoid()
 
-    def forward(self, x):
+    def forward(self, x, train=False):
+        p = 0.5
         # 64
-        x = self.conv1_bn(F.relu(self.conv1_bn(self.conv1(x))))
+        x = F.dropout2d(self.conv1_bn(F.relu(self.conv1_bn(self.conv1(x)))), p, train)
         residual = x
-        x = self.conv2_bn(F.relu(self.conv2_bn(self.conv2(x))))
+        x = F.dropout2d(self.conv2_bn(F.relu(self.conv2_bn(self.conv2(x)))), p, train)
         x += residual
-        x = self.conv3_bn(F.relu(self.conv3_bn(self.conv3(x))))
+        x = F.dropout2d(self.conv3_bn(F.relu(self.conv3_bn(self.conv3(x)))), p, train)
         residual = x
-        x = self.conv4_bn(F.relu(self.conv4_bn(self.conv4(x))))
+        x = F.dropout2d(self.conv4_bn(F.relu(self.conv4_bn(self.conv4(x)))), p, train)
         x += residual
         
         # 128
-        x = self.conv5_bn(F.relu(self.conv5_bn(self.conv5(x))))
+        x = F.dropout2d(self.conv5_bn(F.relu(self.conv5_bn(self.conv5(x)))), p, train)
         residual = x
-        x = self.conv6_bn(F.relu(self.conv6_bn(self.conv6(x))))
+        x = F.dropout2d(self.conv6_bn(F.relu(self.conv6_bn(self.conv6(x)))), p, train)
         x += residual
-        x = self.conv7_bn(F.relu(self.conv7_bn(self.conv7(x))))
+        x = F.dropout2d(self.conv7_bn(F.relu(self.conv7_bn(self.conv7(x)))), p, train)
         
         # 256
-        x = self.conv8_bn(F.relu(self.conv8_bn(self.conv8(x))))
+        x = F.dropout2d(self.conv8_bn(F.relu(self.conv8_bn(self.conv8(x)))), p, train)
         residual = x
-        x = self.conv9_bn(F.relu(self.conv9_bn(self.conv9(x))))
+        x = F.dropout2d(self.conv9_bn(F.relu(self.conv9_bn(self.conv9(x)))), p, train)
         x += residual
-        x = self.conv10_bn(F.relu(self.conv10_bn(self.conv10(x))))
+        x = F.dropout2d(self.conv10_bn(F.relu(self.conv10_bn(self.conv10(x)))), p, train)
         
-        x = x.view(x.size()[0], 1 * 112 * 112)
-        x = self.fc1(x)
+        x = x.view(x.size()[0], 1 * 200 * 200)
+        x = self.sigmoid(self.fc1(x))
         return x
 
