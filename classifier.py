@@ -32,15 +32,15 @@ class Classifier(nn.Module):
         
         self.pool = nn.MaxPool2d(3, 3)
         
-        self.fc1 = nn.Linear(128 * 5 * 5, 1024)
+        self.fc1 = nn.Linear(128 * 5 * 5, 2048)
         nn.init.xavier_uniform_(self.fc1.weight)
-        self.fc1_bn = nn.BatchNorm1d(1024)
+        self.fc1_bn = nn.BatchNorm1d(2048)
         
-        self.fc2 = nn.Linear(1024, 512)
+        self.fc2 = nn.Linear(2048, 1024)
         nn.init.xavier_uniform_(self.fc2.weight)
-        self.fc2_bn = nn.BatchNorm1d(512)
+        self.fc2_bn = nn.BatchNorm1d(1024)
         
-        self.fc3 = nn.Linear(512, NUM_CLASSES)
+        self.fc3 = nn.Linear(1024, NUM_CLASSES)
         nn.init.xavier_uniform_(self.fc3.weight)
         self.dropout = nn.Dropout(p = 0.4)
 
@@ -52,9 +52,11 @@ class Classifier(nn.Module):
         x = F.relu(self.conv5_bn(self.conv5(x)))
 #         print(x.size())
         x = x.view(x.size()[0], 128 * 5 * 5)
-        x = self.dropout(F.relu(self.fc1(x)))
-        x = self.dropout(F.relu(self.fc2(x)))
-        x = self.dropout(F.relu(self.fc3(x)))
+        x = self.dropout(F.relu(self.fc1_bn(self.fc1(x))))
+#         print(x.size())
+        x = self.dropout(F.relu(self.fc2_bn(self.fc2(x))))
+#         print(x.size())
+        x = F.relu(self.fc3(x))
         return x
 
 
