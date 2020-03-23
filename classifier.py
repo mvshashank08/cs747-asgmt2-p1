@@ -24,13 +24,13 @@ class Classifier(nn.Module):
         
         self.pool = nn.MaxPool2d(2, 2)
         
-        self.fc1 = nn.Linear(256 * 28 * 28, 1024)
-        self.fc1_bn = nn.BatchNorm1d(1024)
+        self.fc1 = nn.Linear(256 * 28 * 28, 2048)
+        self.fc1_bn = nn.BatchNorm1d(2048)
         
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc2_bn = nn.BatchNorm1d(512)
+        self.fc2 = nn.Linear(2048, 1024)
+        self.fc2_bn = nn.BatchNorm1d(1024)
         
-        self.fc3 = nn.Linear(512, NUM_CLASSES)
+        self.fc3 = nn.Linear(1024, NUM_CLASSES)
         self.dropout = nn.Dropout(p = 0.35)
 
     def forward(self, x):
