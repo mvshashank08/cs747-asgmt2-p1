@@ -25,23 +25,23 @@ class Classifier(nn.Module):
         self.conv5 = nn.Conv2d(192, 128, 3)
         self.conv5_bn = nn.BatchNorm2d(128)
         
-        self.pool = nn.MaxPool2d(3, 3)
+        self.pool = nn.MaxPool2d(2, 2)
         
-        self.fc1 = nn.Linear(128 * 5 * 5, 2048)
-        self.fc1_bn = nn.BatchNorm1d(2048)
+        self.fc1 = nn.Linear(128 * 5 * 5, 1024)
+        self.fc1_bn = nn.BatchNorm1d(1024)
         
-        self.fc2 = nn.Linear(2048, 1024)
+        self.fc2 = nn.Linear(1024, 1024)
         self.fc2_bn = nn.BatchNorm1d(1024)
         
         self.fc3 = nn.Linear(1024, NUM_CLASSES)
         self.dropout = nn.Dropout(p = 0.4)
 
     def forward(self, x):
-        x = self.conv1_bn(F.relu(self.conv1(x)))
+        x = self.pool(self.conv1_bn(F.relu(self.conv1(x))))
         x = self.pool(self.conv2_bn(F.relu(self.conv2(x))))
         x = self.pool(self.conv3_bn(F.relu(self.conv3(x))))
         x = self.pool(self.conv4_bn(F.relu(self.conv4(x))))
-        x = self.conv5_bn(F.relu(self.conv5(x)))
+        x = self.pool(self.conv5_bn(F.relu(self.conv5(x))))
 #         print(x.size())
         x = x.view(x.size()[0], 128 * 5 * 5)
         x = self.dropout(F.relu(self.fc1_bn(self.fc1(x))))
