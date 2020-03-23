@@ -19,36 +19,32 @@ class Classifier(nn.Module):
         self.conv3 = nn.Conv2d(128, 152, 3, padding=1)
         self.conv3_bn = nn.BatchNorm2d(152)
         
-        self.conv4 = nn.Conv2d(152, 192, 3)
-        self.conv4_bn = nn.BatchNorm2d(192)
-        
-        self.conv5 = nn.Conv2d(192, 128, 3)
-        self.conv5_bn = nn.BatchNorm2d(128)
+#         self.conv4 = nn.Conv2d(152, 192, 3)
+#         self.conv4_bn = nn.BatchNorm2d(192)
         
         self.pool = nn.MaxPool2d(2, 2)
         
-        self.fc1 = nn.Linear(128 * 5 * 5, 1024)
-        self.fc1_bn = nn.BatchNorm1d(1024)
+        self.fc1 = nn.Linear(152 * 28 * 28, 256)
+        self.fc1_bn = nn.BatchNorm1d(256)
         
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc2_bn = nn.BatchNorm1d(512)
+#         self.fc2 = nn.Linear(512, 256)
+#         self.fc2_bn = nn.BatchNorm1d(256)
         
-        self.fc3 = nn.Linear(512, NUM_CLASSES)
+        self.fc2 = nn.Linear(256, NUM_CLASSES)
         self.dropout = nn.Dropout(p = 0.35)
 
     def forward(self, x):
         x = self.pool(self.conv1_bn(F.relu(self.conv1(x))))
         x = self.pool(self.conv2_bn(F.relu(self.conv2(x))))
         x = self.pool(self.conv3_bn(F.relu(self.conv3(x))))
-        x = self.pool(self.conv4_bn(F.relu(self.conv4(x))))
-        x = self.pool(self.conv5_bn(F.relu(self.conv5(x))))
+#         x = self.pool(self.conv4_bn(F.relu(self.conv4(x))))
 #         print(x.size())
-        x = x.view(x.size()[0], 128 * 5 * 5)
+        x = x.view(x.size()[0], 152 * 28 * 28)
         x = self.dropout(self.fc1_bn(F.relu(self.fc1(x))))
 #         print(x.size())
-        x = self.dropout(self.fc2_bn(F.relu(self.fc2(x))))
+#         x = self.dropout(self.fc2_bn(F.relu(self.fc2(x))))
 #         print(x.size())
-        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc2(x))
         return x
 
 
