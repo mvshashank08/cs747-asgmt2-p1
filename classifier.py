@@ -31,7 +31,7 @@ class Classifier(nn.Module):
         self.fc2_bn = nn.BatchNorm1d(1024)
         
         self.fc3 = nn.Linear(1024, NUM_CLASSES)
-        self.dropout = nn.Dropout(p = 0.35)
+        self.dropout = nn.Dropout(p = 0.2)
 
     def forward(self, x):
         x = self.pool(self.conv1_bn(F.relu(self.conv1(x))))
@@ -40,9 +40,9 @@ class Classifier(nn.Module):
         x = self.pool(self.conv4_bn(F.relu(self.conv4(x))))
 #         print(x.size())
         x = x.view(x.size()[0], 512 * 13 * 13)
-        x = self.fc1_bn(F.relu(self.fc1(x)))
+        x = self.dropout(self.fc1_bn(F.relu(self.fc1(x))))
 #         print(x.size())
-        x = self.fc2_bn(F.relu(self.fc2(x)))
+        x = self.dropout(self.fc2_bn(F.relu(self.fc2(x))))
 #         print(x.size())
         x = F.relu(self.fc3(x))
         return x
